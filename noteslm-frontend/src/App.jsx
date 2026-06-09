@@ -27,7 +27,7 @@ function App() {
     script.defer = true;
     script.onload = () => {
       window.google?.accounts.id.initialize({
-        client_id: "263824013785-iu2d5cgu7dt0rlimfrf26q80jdg7ncth.apps.googleusercontent.com", 
+        client_id: "263824013785-bt396c5q3sd4sc9t65n8kh65sb3ul9qb.apps.googleusercontent.com", 
         callback: handleGoogleLoginResponse
       });
       
