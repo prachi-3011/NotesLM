@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-export default function Sidebar({ documents, activeDocId, setActiveDocId, onFileUpload, onFileDelete }) {
+export default function Sidebar({ documents, activeDocId, setActiveDocId, onFileUpload, onFileDelete, user, onSignOut }) {
   const fileRef = useRef(null);
 
   const handleInternalDelete = (docId, event) => {
@@ -64,6 +64,22 @@ export default function Sidebar({ documents, activeDocId, setActiveDocId, onFile
           })
         )}
       </div>
+
+      {/* 🌟 USER STORAGE SIGN OUT FOOTER SECTION */}
+      {user && (
+        <div className="sidebar-user-footer">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
+            <img src={user.picture} alt="profile" className="user-avatar" referrerPolicy="no-referrer" />
+            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <span style={{ fontSize: '13px', fontWeight: '600', color: '#ffffff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.name}</span>
+              <span style={{ fontSize: '11px', color: '#5c6b73', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.email}</span>
+            </div>
+          </div>
+          <button onClick={onSignOut} className="signout-button">
+            Sign Out
+          </button>
+        </div>
+      )}
     </div>
   );
 }

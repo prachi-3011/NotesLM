@@ -5,16 +5,27 @@ import 'dotenv/config';
 import { Groq } from 'groq-sdk';
 import mammoth from 'mammoth';
 import { PDFParse } from 'pdf-parse';
+import { OAuth2Client } from 'google-auth-library'; // 🌟 Added for secure Google token validation
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const oauth2Client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // MongoDB Schemas
+const UserSchema = new mongoose.Schema({
+  googleId: String,
+  email: String,
+  name: String,
+  picture: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
 const DocumentSchema = new mongoose.Schema({ 
   name: String, 
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // 🌟 Scoped to user
   uploadedAt: { type: Date, default: Date.now } 
 });
 
@@ -23,6 +34,7 @@ const ChunkSchema = new mongoose.Schema({
   text: String 
 });
 
+const User = mongoose.model('User', UserSchema);
 const Document = mongoose.model('Document', DocumentSchema);
 const Chunk = mongoose.model('Chunk', ChunkSchema);
 
@@ -31,32 +43,61 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/noteslm')
   .then(() => console.log("Connected to MongoDB Database Matrix"))
   .catch(err => console.error("Database connection failure:", err));
 
-// GET ALL DOCUMENTS
+// 🌟 GOOGLE OAUTH VERIFICATION ENDPOINT
+app.post('/api/auth/google', async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) return res.status(400).json({ error: "Missing token credential stream." });
+
+    // Verify token identity payload via Google's network keys
+    const ticket = await oauth2Client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+    
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Find or Upsert User Record
+    let user = await User.findOne({ googleId });
+    if (!user) {
+      user = await User.create({ googleId, email, name, picture });
+    }
+
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ error: "Authentication verification failed." });
+  }
+});
+
+// GET ALL DOCUMENTS (Filtered by Authenticated User)
 app.get('/api/documents', async (req, res) => {
   try {
-    const docs = await Document.find().sort({ uploadedAt: -1 });
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ error: "User context identification missing." });
+    
+    const docs = await Document.find({ userId: new mongoose.Types.ObjectId(userId) }).sort({ uploadedAt: -1 });
     res.json(docs);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// UPLOAD & VECTORIZE DOCUMENT (Fixed for pdf-parse v2)
+// UPLOAD & VECTORIZE DOCUMENT (Associated with logged-in user)
 app.post('/api/upload', async (req, res) => {
   try {
-    const { name, base64Data, fileType } = req.body;
+    const { name, base64Data, fileType, userId } = req.body;
+    if (!userId) return res.status(400).json({ error: "User context identification missing." });
     if (!base64Data) return res.status(400).json({ error: "Missing raw data stream blocks." });
 
     const fileBuffer = Buffer.from(base64Data, 'base64');
     let extractedText = "";
 
     if (fileType === "application/pdf" || name.endsWith('.pdf')) {
-      // Instantiate the modern v2 class parser
       const parser = new PDFParse({ data: new Uint8Array(fileBuffer) });
       const parsedPdf = await parser.getText();
       extractedText = parsedPdf.text;
-      
-      // Clean up the parser worker memory allocation
       await parser.destroy();
     } else if (name.endsWith('.docx')) {
       const result = await mammoth.extractRawText({ buffer: fileBuffer });
@@ -69,7 +110,7 @@ app.post('/api/upload', async (req, res) => {
       return res.status(400).json({ error: "No text layers parsed successfully." });
     }
 
-    const newDoc = await Document.create({ name });
+    const newDoc = await Document.create({ name, userId: new mongoose.Types.ObjectId(userId) });
     
     // Chunking text layers
     const chunkSize = 800;

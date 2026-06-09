@@ -4,6 +4,10 @@ import ChatArea from './components/ChatArea';
 import './App.css';
 
 function App() {
+  const [user, setUser] = useState(() => {
+    const cached = localStorage.getItem('noteslm_user');
+    return cached ? JSON.parse(cached) : null;
+  });
   const [documents, setDocuments] = useState([]);
   const [activeDocId, setActiveDocId] = useState(null);
   const [messages, setMessages] = useState([
@@ -13,17 +17,77 @@ function App() {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const chatEndRef = useRef(null);
 
+  // 🌟 DYNAMICALLY MOUNT GOOGLE IDENTITY CLIENT LIBRARY
   useEffect(() => {
-    fetchDocumentsList();
-  }, []);
+    if (user) return;
+
+    const script = document.createElement('script');
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      window.google?.accounts.id.initialize({
+        client_id: "263824013785-iu2d5cgu7dt0rlimfrf26q80jdg7ncth.apps.googleusercontent.com", 
+        callback: handleGoogleLoginResponse
+      });
+      
+      const btnTarget = document.getElementById("google-sigin-hook");
+      if (btnTarget) {
+        window.google?.accounts.id.renderButton(btnTarget, {
+          theme: "outline",
+          size: "large",
+          text: "signin_with",
+          shape: "pill"
+        });
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchDocumentsList();
+    }
+  }, [user]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const handleGoogleLoginResponse = async (response) => {
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: response.credential })
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        setUser(userData);
+        localStorage.setItem('noteslm_user', JSON.stringify(userData));
+      } else {
+        alert("Authentication failed on server pipeline verification.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSignOut = () => {
+    setUser(null);
+    setDocuments([]);
+    setActiveDocId(null);
+    setMessages([{ sender: 'assistant', text: 'System Online. Select an active document source to begin context-grounded analysis.' }]);
+    localStorage.removeItem('noteslm_user');
+  };
+
   const fetchDocumentsList = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/documents');
+      const response = await fetch(`http://localhost:5000/api/documents?userId=${user._id}`);
       if (response.ok) {
         const data = await response.json();
         setDocuments(data);
@@ -46,7 +110,12 @@ function App() {
         const response = await fetch("http://localhost:5000/api/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: file.name, base64Data: base64Data, fileType: file.type })
+          body: JSON.stringify({ 
+            name: file.name, 
+            base64Data: base64Data, 
+            fileType: file.type,
+            userId: user._id 
+          })
         });
 
         const responseData = await response.json();
@@ -112,6 +181,21 @@ function App() {
     }
   };
 
+  // 🌟 AUTHENTICATION ROUTE GUARD
+  if (!user) {
+    return (
+      <div className="login-container">
+        <div className="login-card">
+          <h1 className="login-brand">
+            Notes<span style={{ color: '#ccff00' }}>LM</span>
+          </h1>
+          <p className="login-subtitle">Unlock grounded, structured intelligence layouts.</p>
+          <div id="google-sigin-hook" style={{ marginTop: '20px' }}></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="app-container">
       <Sidebar 
@@ -120,6 +204,8 @@ function App() {
         setActiveDocId={setActiveDocId} 
         onFileUpload={handleFileUpload} 
         onFileDelete={handleFileDelete} 
+        user={user}
+        onSignOut={handleSignOut}
       />
       <ChatArea 
         messages={messages} 
