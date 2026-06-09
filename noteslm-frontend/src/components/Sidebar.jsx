@@ -3,26 +3,10 @@ import * as React from 'react';
 export default function Sidebar({ documents, activeDocId, setActiveDocId, onFileUpload, onFileDelete }) {
   const fileRef = React.useRef(null);
 
-  // Fallback deletion controller to ensure smooth pipeline tracking
-  const handleInternalDelete = async (docId, event) => {
-    event.stopPropagation(); // Stops the button click from auto-selecting the document row
-    
-    if (!window.confirm("Are you sure you want to permanently delete this document from cloud storage?")) return;
-
-    if (typeof onFileDelete === 'function') {
+  const handleInternalDelete = (docId, event) => {
+    event.stopPropagation(); // Stops row select from triggering when clicking delete icon
+    if (window.confirm("Are you sure you want to permanently delete this document from cloud storage?")) {
       onFileDelete(docId);
-    } else {
-      // In-line integration hook if App.js framework mapping is directly fetching network requests
-      try {
-        const response = await fetch(`http://localhost:5000/api/documents/${docId}`, { method: "DELETE" });
-        if (response.ok) {
-          window.location.reload(); // Quick sync strategy if state setters are not mapped
-        } else {
-          alert("Could not remove the document from server arrays.");
-        }
-      } catch (err) {
-        console.error("Network deletion pipeline failure:", err);
-      }
     }
   };
 
@@ -32,15 +16,14 @@ export default function Sidebar({ documents, activeDocId, setActiveDocId, onFile
       flexDirection: 'column', 
       width: '260px',
       backgroundColor: '#0b132b',
-      borderRight: '1px solid #ccff00',
-      height: '100vh',
-      padding: '20px 15px',
+      height: '100%',
+      padding: '15px 15px 20px 15px',
       boxSizing: 'border-box',
       flexShrink: 0,
       fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
       
-      {/* Sidebar Top Header Row Section */}
+      {/* Sidebar Header Row Section */}
       <div style={{
         display: 'flex', 
         flexDirection: 'row', 
@@ -52,12 +35,12 @@ export default function Sidebar({ documents, activeDocId, setActiveDocId, onFile
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '18px' }}>📚</span>
-          <span style={{ fontWeight: '700', letterSpacing: '0.5px', fontSize: '16px', color: '#ffffff' }}>
+          <span style={{ fontWeight: '700', letterSpacing: '0.3px', fontSize: '16px', color: '#ffffff' }}>
             Sources
           </span>
         </div>
 
-        {/* Hidden File Input UI Ingestion Layer */}
+        {/* Hidden File Ingestion Native Layer */}
         <input 
           type="file" 
           ref={fileRef}
@@ -65,6 +48,8 @@ export default function Sidebar({ documents, activeDocId, setActiveDocId, onFile
           accept=".txt,.pdf,.md,.docx"
           style={{ display: 'none' }}
         />
+        
+        {/* Neon Yellow Plus Icon Enclosure Container */}
         <button 
           onClick={() => fileRef.current.click()}
           style={{
@@ -78,16 +63,27 @@ export default function Sidebar({ documents, activeDocId, setActiveDocId, onFile
             fontWeight: '600',
             display: 'flex',
             alignItems: 'center',
-            gap: '4px',
-            textShadow: '0 0 6px rgba(204, 255, 0, 0.4)'
+            gap: '5px',
+            textShadow: '0 0 6px rgba(204, 255, 0, 0.5)',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = '#ccff00';
+            e.currentTarget.style.color = '#0b132b';
+            e.currentTarget.style.textShadow = 'none';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = '#ccff00';
+            e.currentTarget.style.textShadow = '0 0 6px rgba(204, 255, 0, 0.5)';
           }}
         >
-          <span style={{ fontSize: '16px', fontWeight: 'bold', lineHeight: '0', color: '#ccff00' }}>+</span> Upload
+          <span style={{ fontSize: '16px', fontWeight: 'bold', lineHeight: '0' }}>+</span> Upload
         </button>
       </div>
 
-      {/* Interactive Active State Buttons Container Feed */}
-      <div style={{ 
+      {/* Interactive Active State Buttons Feed Scroll Workspace */}
+      <div className="documents-list" style={{ 
         display: 'flex', 
         flexDirection: 'column', 
         gap: '10px', 
@@ -119,7 +115,7 @@ export default function Sidebar({ documents, activeDocId, setActiveDocId, onFile
                   transition: 'all 0.15s ease'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden', width: '80%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden', width: '85%' }}>
                   <span style={{ flexShrink: 0 }}>📄</span> 
                   <span style={{ 
                     marginLeft: '10px', 
@@ -150,7 +146,7 @@ export default function Sidebar({ documents, activeDocId, setActiveDocId, onFile
                   }}
                   onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
                   onMouseOut={(e) => e.currentTarget.style.opacity = '0.6'}
-                  title="Delete Document Source"
+                  title="Delete Source"
                 >
                   🗑️
                 </button>
