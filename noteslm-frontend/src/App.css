@@ -1,22 +1,26 @@
 /* --- Core App Window Properties --- */
 .app-container {
   display: flex;
+  flex-direction: row;
   height: 100vh;
-  background-color: #050b14; /* Maximum Dark Navy Core Base */
+  width: 100vw;
+  background-color: #050b14; 
   color: #f4f6f9;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow: hidden;
 }
 
-/* --- Sidebar Setup (Title + Upload inline Alignment) --- */
+/* --- Sidebar Setup --- */
 .sidebar {
-  width: 290px;
-  background-color: #0b132b; /* Deep Rich Navy */
-  border-right: 3px solid #e6ff00; /* Neon Yellow Sidebar Accent Boundary */
-  padding: 20px;
+  width: 260px;
+  background-color: #0b132b; 
+  border-right: 1px solid rgba(204, 255, 0, 0.2);
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  height: 100vh;
 }
 
 .sidebar-header {
@@ -24,100 +28,106 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #1c2541;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(204, 255, 0, 0.15);
 }
 
 .sidebar-title {
-  color: #ffffff; /* Crisp Clean White */
-  font-size: 20px;
+  color: #ffffff;
+  font-size: 16px;
   font-weight: 700;
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
 }
 
-/* Inline Small Upload Icon Button Container */
+/* --- Modern Thin Neon Plus Upload Trigger --- */
 .upload-icon-button {
+  color: #ccff00;
+  font-size: 28px;
+  font-weight: 200;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(204, 255, 0, 0.4);
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
-  background-color: transparent;
-  color: #e6ff00;
-  border: 2px solid #e6ff00;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  transition: all 0.2s ease-in-out;
+  font-family: system-ui, -apple-system, sans-serif;
+  user-select: none;
 }
 
 .upload-icon-button:hover {
-  background-color: #e6ff00;
-  color: #0b132b;
-  box-shadow: 0 0 10px rgba(230, 255, 0, 0.5);
+  transform: scale(1.15);
+  text-shadow: 0 0 15px rgba(204, 255, 0, 0.8);
 }
 
 .documents-list {
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
+  overflow-y: auto; 
   flex-grow: 1;
-  overflow-y: auto;
 }
 
 .no-docs {
-  color: #475569;
-  font-size: 13px;
+  color: #5c6b73;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 20px;
   font-style: italic;
-  padding: 10px 0;
 }
 
-/* --- Document Rows --- */
+/* --- Document Items --- */
 .document-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 12px;
-  margin-bottom: 10px;
+  padding: 10px 12px;
   border-radius: 6px;
-  background-color: #1c2541; /* Mid-Tone Navy */
-  border: 1px solid #3a506b;
-  transition: all 0.2s ease;
+  background-color: #1c2541;
+  border: 1px solid transparent;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
 }
 
 .document-item:hover {
-  border-color: #e6ff00;
-  background-color: #222e50;
+  border-color: rgba(204, 255, 0, 0.3);
+  background-color: rgba(204, 255, 0, 0.05);
 }
 
 .document-item.active {
-  background-color: #1c2541;
-  border: 2px solid #e6ff00;
-  box-shadow: inset 0 0 8px rgba(230, 255, 0, 0.2);
+  background-color: rgba(204, 255, 0, 0.12);
+  border: 1px solid #ccff00;
 }
 
 .doc-name {
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 80%;
-  font-size: 14px;
-  color: #f4f6f9;
+  font-size: 13px;
+  color: #e0e1dd;
   font-weight: 500;
-  letter-spacing: 0.2px;
 }
 
 .document-item.active .doc-name {
-  color: #e6ff00;
+  color: #ccff00;
   font-weight: 600;
 }
 
 .delete-btn {
   background: transparent;
   border: none;
+  color: #ff4d4d;
   cursor: pointer;
-  font-size: 14px;
-  opacity: 0.5;
+  font-size: 13px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
   transition: opacity 0.2s;
 }
 
@@ -125,170 +135,161 @@
   opacity: 1;
 }
 
-/* --- Main Workspace (Title Bar Setup) --- */
+/* --- Main Workspace Layout --- */
 .chat-area {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  background-color: #0a1128;
+  flex: 1;
+  height: 100vh;
+  background-color: #060b19;
+  overflow: hidden;
 }
 
 .chat-header {
-  padding: 20px 30px;
-  border-bottom: 2px solid #1c2541;
-  background-color: #0b132b;
-}
-
-.chat-header h2 {
-  margin: 0;
-  font-size: 22px;
   display: flex;
   align-items: center;
-  gap: 15px;
+  padding: 15px 40px;
+  background-color: #0b132b;
+  border-bottom: 2px solid #1c2541;
+  height: 60px;
+  box-sizing: border-box;
 }
 
-/* Specific Target Branding Font Styles */
 .brand-title {
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
 }
 
-/* "Notes" part: White with only N capitalized */
 .brand-notes {
   color: #ffffff;
-  text-transform: none; /* Disables the previous uppercase filter override */
 }
 
-/* "LM" part: Neon Yellow with both letters capitalized */
 .brand-lm {
-  color: #e6ff00;
-  text-transform: uppercase;
-  text-shadow: 0 0 8px rgba(230, 255, 0, 0.4);
+  color: #ccff00;
+  text-shadow: 0 0 8px rgba(204, 255, 0, 0.3);
 }
 
-/* Inline Dynamic Selection Reference Badge */
 .active-source-tag {
-  font-size: 14px;
-  color: #f4f6f9;
-  font-weight: 400;
+  font-size: 12px;
+  color: #ccff00;
+  margin-left: 15px;
+  padding: 4px 10px;
   background-color: #1c2541;
-  padding: 4px 12px;
-  border-radius: 4px;
-  border: 1px solid #3a506b;
-  max-width: 400px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+  border: 1px solid rgba(204, 255, 0, 0.3);
+  borderRadius: 4px;
+  font-weight: 400;
 }
 
-/* --- Chat Space --- */
+.global-source-tag {
+  font-size: 12px;
+  color: #8ecae6;
+  margin-left: 15px;
+  padding: 4px 10px;
+  background-color: #1c2541;
+  borderRadius: 4px;
+  font-weight: 400;
+}
+
+/* --- Chat Container Space --- */
 .messages-container {
-  flex-grow: 1;
-  padding: 30px;
+  flex: 1;
   overflow-y: auto;
+  padding: 30px 40px;
   display: flex;
   flex-direction: column;
+  gap: 18px;
 }
 
 .message-row {
   display: flex;
-  margin-bottom: 20px;
   width: 100%;
 }
 
-.user-style {
+.message-row.user-style {
   justify-content: flex-end;
 }
 
-.assistant-style {
+.message-row.assistant-style {
   justify-content: flex-start;
 }
 
 .message-bubble {
   max-width: 65%;
   padding: 14px 18px;
-  border-radius: 10px;
   font-size: 15px;
-  line-height: 1.6;
+  white-space: pre-wrap;
+  line-height: 1.5;
 }
 
 .user-style .message-bubble {
-  background-color: #e6ff00;
+  border-radius: 16px 16px 2px 16px;
+  background-color: #ccff00;
   color: #050b14;
-  font-weight: 500;
-  border-bottom-right-radius: 2px;
-  box-shadow: 0 4px 10px rgba(230, 255, 0, 0.15);
 }
 
 .assistant-style .message-bubble {
+  border-radius: 16px 16px 16px 2px;
   background-color: #1c2541;
-  color: #f4f6f9;
   border: 1px solid #3a506b;
-  border-bottom-left-radius: 2px;
+  color: #f4f6f9;
 }
 
-.message-bubble.loading {
-  color: #e6ff00;
+.loading-text {
+  color: #ccff00;
+  font-size: 13px;
   font-style: italic;
 }
 
-/* --- Round Pill Input and Enclosed Send Button --- */
+/* --- Rounded Form Pill Inputs --- */
 .chat-input-wrapper {
-  padding: 25px 30px;
+  padding: 25px 40px 30px 40px;
   background-color: #0b132b;
   border-top: 2px solid #1c2541;
 }
 
-/* Rounded Pill Form Bar Container */
 .chat-form-pill {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  width: 100%;
+  maxWidth: 900px;
+  margin: 0 auto;
+  height: 54px;
   background-color: #050b14;
   border: 2px solid #3a506b;
-  border-radius: 30px; /* Forces round bar shape */
-  padding: 6px 10px 6px 20px;
-  transition: border-color 0.2s;
-}
-
-.chat-form-pill:focus-within {
-  border-color: #e6ff00; /* Yellow Focus ring */
-  box-shadow: 0 0 10px rgba(230, 255, 0, 0.2);
+  borderRadius: 27px;
+  padding: 0 6px 0 22px;
+  box-sizing: border-box;
 }
 
 .chat-form-pill input {
-  flex-grow: 1;
+  flex: 1;
+  height: 100%;
   background: transparent;
+  color: #f4f6f9;
   border: none;
   outline: none;
-  color: #f4f6f9;
   font-size: 15px;
-  padding-right: 15px;
 }
 
-/* Circle button layout nested cleanly inside input area bounds */
 .circular-send-btn {
+  background-color: #ccff00;
+  border: none;
+  borderRadius: 50%;
   width: 40px;
   height: 40px;
-  border-radius: 50%; /* Forces circle format */
-  background-color: #e6ff00;
   color: #050b14;
-  border: none;
-  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s, background-color 0.2s;
   flex-shrink: 0;
 }
 
-.circular-send-btn:hover {
-  background-color: #fffb00;
-  transform: scale(1.04);
-}
-
-/* Custom Scrollbar Enhancements */
+/* --- Scrollbars --- */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -300,5 +301,5 @@
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #e6ff00;
+  background: #ccff00;
 }

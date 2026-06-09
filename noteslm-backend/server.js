@@ -59,7 +59,7 @@ app.post('/api/upload', async (req, res) => {
 
     const newDoc = await Document.create({ name });
     
-    // Chunking text layers (Roughly every 800 characters)
+    // Chunking text layers
     const chunkSize = 800;
     const chunkPromises = [];
     for (let i = 0; i < extractedText.length; i += chunkSize) {
