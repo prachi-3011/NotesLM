@@ -54,7 +54,8 @@ export default function ChatArea({ messages, setMessages, activeDocId, documents
       flex: 1, 
       height: '100vh', 
       backgroundColor: '#060b19', 
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
       
       {/* Top Header Section */}
@@ -71,23 +72,30 @@ export default function ChatArea({ messages, setMessages, activeDocId, documents
       }}>
         <h1 style={{
           margin: 0,
-          fontSize: '20px',
+          fontSize: '22px',
           fontWeight: '700',
-          letterSpacing: '1px',
-          color: '#f8fafc',
+          letterSpacing: '0.5px',
           display: 'flex',
           alignItems: 'center'
         }}>
-          NOTES<span style={{ color: '#ccff00' }}>LM</span>
+          {/* Exact Brand Customization Split Rule Mapping */}
+          <span style={{ color: '#ffffff' }}>Notes</span>
+          <span style={{ color: '#ccff00', textShadow: '0 0 8px rgba(204, 255, 0, 0.3)' }}>LM</span>
+          
           {activeFileName && (
             <span style={{
-              fontSize: '11px',
+              fontSize: '12px',
               color: '#ccff00',
               marginLeft: '15px',
-              padding: '2px 8px',
+              padding: '4px 10px',
+              backgroundColor: '#1c2541',
               border: '1px solid rgba(204, 255, 0, 0.3)',
               borderRadius: '4px',
-              fontWeight: '400'
+              fontWeight: '400',
+              maxWidth: '350px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
             }}>
               🎯 Focus Source: {activeFileName}
             </span>
@@ -108,12 +116,12 @@ export default function ChatArea({ messages, setMessages, activeDocId, documents
             transition: 'all 0.2s ease'
           }}
           onMouseOver={(e) => {
-            e.target.style.backgroundColor = '#ff4d4d';
-            e.target.style.color = '#060b19';
+            e.currentTarget.style.backgroundColor = '#ff4d4d';
+            e.currentTarget.style.color = '#060b19';
           }}
           onMouseOut={(e) => {
-            e.target.style.backgroundColor = 'transparent';
-            e.target.style.color = '#ff4d4d';
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = '#ff4d4d';
           }}
         >
           Sign Out
@@ -216,8 +224,11 @@ export default function ChatArea({ messages, setMessages, activeDocId, documents
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              fontSize: '15px'
+              fontSize: '15px',
+              transition: 'transform 0.1s'
             }}
+            onMouseOver={(e) => { if(!isTyping) e.currentTarget.style.transform = 'scale(1.05)' }}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             ➔
           </button>

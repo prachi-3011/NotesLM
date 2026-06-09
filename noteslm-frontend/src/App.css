@@ -1,0 +1,304 @@
+/* --- Core App Window Properties --- */
+.app-container {
+  display: flex;
+  height: 100vh;
+  background-color: #050b14; /* Maximum Dark Navy Core Base */
+  color: #f4f6f9;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* --- Sidebar Setup (Title + Upload inline Alignment) --- */
+.sidebar {
+  width: 290px;
+  background-color: #0b132b; /* Deep Rich Navy */
+  border-right: 3px solid #e6ff00; /* Neon Yellow Sidebar Accent Boundary */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #1c2541;
+}
+
+.sidebar-title {
+  color: #ffffff; /* Crisp Clean White */
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Inline Small Upload Icon Button Container */
+.upload-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  color: #e6ff00;
+  border: 2px solid #e6ff00;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.upload-icon-button:hover {
+  background-color: #e6ff00;
+  color: #0b132b;
+  box-shadow: 0 0 10px rgba(230, 255, 0, 0.5);
+}
+
+.documents-list {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.no-docs {
+  color: #475569;
+  font-size: 13px;
+  font-style: italic;
+  padding: 10px 0;
+}
+
+/* --- Document Rows --- */
+.document-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background-color: #1c2541; /* Mid-Tone Navy */
+  border: 1px solid #3a506b;
+  transition: all 0.2s ease;
+}
+
+.document-item:hover {
+  border-color: #e6ff00;
+  background-color: #222e50;
+}
+
+.document-item.active {
+  background-color: #1c2541;
+  border: 2px solid #e6ff00;
+  box-shadow: inset 0 0 8px rgba(230, 255, 0, 0.2);
+}
+
+.doc-name {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 80%;
+  font-size: 14px;
+  color: #f4f6f9;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.document-item.active .doc-name {
+  color: #e6ff00;
+  font-weight: 600;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+/* --- Main Workspace (Title Bar Setup) --- */
+.chat-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #0a1128;
+}
+
+.chat-header {
+  padding: 20px 30px;
+  border-bottom: 2px solid #1c2541;
+  background-color: #0b132b;
+}
+
+.chat-header h2 {
+  margin: 0;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Specific Target Branding Font Styles */
+.brand-title {
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* "Notes" part: White with only N capitalized */
+.brand-notes {
+  color: #ffffff;
+  text-transform: none; /* Disables the previous uppercase filter override */
+}
+
+/* "LM" part: Neon Yellow with both letters capitalized */
+.brand-lm {
+  color: #e6ff00;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(230, 255, 0, 0.4);
+}
+
+/* Inline Dynamic Selection Reference Badge */
+.active-source-tag {
+  font-size: 14px;
+  color: #f4f6f9;
+  font-weight: 400;
+  background-color: #1c2541;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid #3a506b;
+  max-width: 400px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* --- Chat Space --- */
+.messages-container {
+  flex-grow: 1;
+  padding: 30px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-row {
+  display: flex;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.user-style {
+  justify-content: flex-end;
+}
+
+.assistant-style {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 65%;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.user-style .message-bubble {
+  background-color: #e6ff00;
+  color: #050b14;
+  font-weight: 500;
+  border-bottom-right-radius: 2px;
+  box-shadow: 0 4px 10px rgba(230, 255, 0, 0.15);
+}
+
+.assistant-style .message-bubble {
+  background-color: #1c2541;
+  color: #f4f6f9;
+  border: 1px solid #3a506b;
+  border-bottom-left-radius: 2px;
+}
+
+.message-bubble.loading {
+  color: #e6ff00;
+  font-style: italic;
+}
+
+/* --- Round Pill Input and Enclosed Send Button --- */
+.chat-input-wrapper {
+  padding: 25px 30px;
+  background-color: #0b132b;
+  border-top: 2px solid #1c2541;
+}
+
+/* Rounded Pill Form Bar Container */
+.chat-form-pill {
+  display: flex;
+  align-items: center;
+  background-color: #050b14;
+  border: 2px solid #3a506b;
+  border-radius: 30px; /* Forces round bar shape */
+  padding: 6px 10px 6px 20px;
+  transition: border-color 0.2s;
+}
+
+.chat-form-pill:focus-within {
+  border-color: #e6ff00; /* Yellow Focus ring */
+  box-shadow: 0 0 10px rgba(230, 255, 0, 0.2);
+}
+
+.chat-form-pill input {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f4f6f9;
+  font-size: 15px;
+  padding-right: 15px;
+}
+
+/* Circle button layout nested cleanly inside input area bounds */
+.circular-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Forces circle format */
+  background-color: #e6ff00;
+  color: #050b14;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.circular-send-btn:hover {
+  background-color: #fffb00;
+  transform: scale(1.04);
+}
+
+/* Custom Scrollbar Enhancements */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050b14;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2541;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e6ff00;
+}
