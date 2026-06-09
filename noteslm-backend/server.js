@@ -4,10 +4,7 @@ import mongoose from 'mongoose';
 import 'dotenv/config';
 import { Groq } from 'groq-sdk';
 import mammoth from 'mammoth';
-
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse');
+import { PDFParse } from 'pdf-parse';
 
 const app = express();
 app.use(cors());
@@ -16,12 +13,20 @@ app.use(express.json({ limit: '50mb' }));
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // MongoDB Schemas
-const DocumentSchema = new mongoose.Schema({ name: String, uploadedAt: { type: Date, default: Date.now } });
-const ChunkSchema = new mongoose.Schema({ documentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' }, text: String });
+const DocumentSchema = new mongoose.Schema({ 
+  name: String, 
+  uploadedAt: { type: Date, default: Date.now } 
+});
+
+const ChunkSchema = new mongoose.Schema({ 
+  documentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' }, 
+  text: String 
+});
 
 const Document = mongoose.model('Document', DocumentSchema);
 const Chunk = mongoose.model('Chunk', ChunkSchema);
 
+// Database Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/noteslm')
   .then(() => console.log("Connected to MongoDB Database Matrix"))
   .catch(err => console.error("Database connection failure:", err));
@@ -36,7 +41,7 @@ app.get('/api/documents', async (req, res) => {
   }
 });
 
-// UPLOAD & VECTORIZE DOCUMENT
+// UPLOAD & VECTORIZE DOCUMENT (Fixed for pdf-parse v2)
 app.post('/api/upload', async (req, res) => {
   try {
     const { name, base64Data, fileType } = req.body;
@@ -46,8 +51,13 @@ app.post('/api/upload', async (req, res) => {
     let extractedText = "";
 
     if (fileType === "application/pdf" || name.endsWith('.pdf')) {
-      const parsedPdf = await pdfParse(fileBuffer);
+      // Instantiate the modern v2 class parser
+      const parser = new PDFParse({ data: new Uint8Array(fileBuffer) });
+      const parsedPdf = await parser.getText();
       extractedText = parsedPdf.text;
+      
+      // Clean up the parser worker memory allocation
+      await parser.destroy();
     } else if (name.endsWith('.docx')) {
       const result = await mammoth.extractRawText({ buffer: fileBuffer });
       extractedText = result.value;
@@ -55,7 +65,9 @@ app.post('/api/upload', async (req, res) => {
       extractedText = fileBuffer.toString('utf-8');
     }
 
-    if (!extractedText.trim()) return res.status(400).json({ error: "No text layers parsed successfully." });
+    if (!extractedText || !extractedText.trim()) {
+      return res.status(400).json({ error: "No text layers parsed successfully." });
+    }
 
     const newDoc = await Document.create({ name });
     

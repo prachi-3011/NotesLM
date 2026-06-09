@@ -178,7 +178,7 @@
   padding: 4px 10px;
   background-color: #1c2541;
   border: 1px solid rgba(204, 255, 0, 0.3);
-  borderRadius: 4px;
+  border-Radius: 4px;
   font-weight: 400;
 }
 
@@ -188,7 +188,7 @@
   margin-left: 15px;
   padding: 4px 10px;
   background-color: #1c2541;
-  borderRadius: 4px;
+  border-Radius: 4px;
   font-weight: 400;
 }
 
@@ -254,12 +254,12 @@
   flex-direction: row;
   align-items: center;
   width: 100%;
-  maxWidth: 900px;
+  max-Width: 900px;
   margin: 0 auto;
   height: 54px;
   background-color: #050b14;
   border: 2px solid #3a506b;
-  borderRadius: 27px;
+  border-Radius: 27px;
   padding: 0 6px 0 22px;
   box-sizing: border-box;
 }
@@ -277,7 +277,7 @@
 .circular-send-btn {
   background-color: #ccff00;
   border: none;
-  borderRadius: 50%;
+  border-Radius: 50%;
   width: 40px;
   height: 40px;
   color: #050b14;
